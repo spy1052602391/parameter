@@ -1,0 +1,40 @@
+package com.JDBC编程.JDBC参数作为表名;
+
+import java.sql.*;
+import java.time.LocalDateTime;
+
+public class Test {
+    public static void queryMemoGroupByName(String groupName){
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/memo?user=root&password=1052602391");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select id,name,created_time,modify_time from memo_group where name='"+groupName+"'");
+            while(resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                LocalDateTime createdTime = resultSet.getTimestamp("created_time").toLocalDateTime();
+                LocalDateTime modifyTime = resultSet.getTimestamp("modify_time").toLocalDateTime();
+                System.out.println(
+                        String.format(
+                                "编号: %d, 名称 %s, 创建时间: %s, 修改时间: %s"
+                                ,id,name,createdTime.toString(),modifyTime.toString()
+                        )
+                );
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void main(String[] args) {
+        queryMemoGroupByName("JAVA组");
+    }
+}
